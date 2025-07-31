@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Acceso Privado de Byte</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
+
+    body {
+      font-family: 'Share Tech Mono', monospace;
+      background: radial-gradient(circle at center, #1a0033 0%, #000 100%);
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    .container {
+      background: rgba(30, 0, 60, 0.85);
+      padding: 30px;
+      border-radius: 15px;
+      box-shadow: 0 0 25px #8a2be2;
+      text-align: center;
+      width: 340px;
+      animation: glow 2s infinite alternate;
+    }
+
+    @keyframes glow {
+      from { box-shadow: 0 0 15px #6a0dad; }
+      to { box-shadow: 0 0 30px #b266ff; }
+    }
+
+    h2 {
+      margin-bottom: 10px;
+      color: #d8b4ff;
+      text-shadow: 0 0 8px #b266ff;
+    }
+
+    input[type="password"] {
+      padding: 10px;
+      margin: 12px 0;
+      width: 90%;
+      border: none;
+      border-radius: 5px;
+      background: #2e004f;
+      color: #fff;
+      font-size: 16px;
+    }
+
+    button {
+      padding: 10px;
+      width: 95%;
+      background: #8a2be2;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    button:hover {
+      background: #b266ff;
+      transform: scale(1.05);
+    }
+
+    .hidden {
+      display: none;
+      margin-top: 20px;
+    }
+
+    a {
+      color: #d8b4ff;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    a:hover {
+      text-shadow: 0 0 10px #fff;
+    }
+
+    #error {
+      color: #ff4d6d;
+      font-weight: bold;
+      text-shadow: 0 0 8px #ff4d6d;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>🔐 Zona Privada de Byte</h2>
+    <p>Introduce la contraseña correcta para acceder al archivo protegido.</p>
+    <input type="password" id="password" placeholder="Contraseña" />
+    <button onclick="checkPassword()">Acceder</button>
+
+    <div id="linkSection" class="hidden">
+      <p>✅ Acceso concedido. Aquí está tu enlace:</p>
+      <a href="https://mega.nz/file/3EclFCSK#Ts2H-ypsxaLid2KLOF-7ygb_9ZXvC_IMdeXdnbn5WwA" target="_blank">⬇️ Descargar archivo</a>
+    </div>
+
+    <div id="error" class="hidden">
+      ❌ Contraseña incorrecta
+    </div>
+  </div>
+
+  <script>
+    function checkPassword() {
+      const input = document.getElementById('password').value.trim();
+      const correct = "byte.bluewolf@protonmail.comD";
+
+      if (input === correct) {
+        document.getElementById('linkSection').classList.remove('hidden');
+        document.getElementById('error').classList.add('hidden');
+      } else {
+        document.getElementById('error').classList.remove('hidden');
+        document.getElementById('linkSection').classList.add('hidden');
+      }
+    }
+  </script>
+</body>
+</html>
