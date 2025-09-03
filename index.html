@@ -48,13 +48,13 @@
   </div>
 
   <script>
-    
-    const ENCRYPTED_PASS_B64 = "KzA9LGcrJTwsPiYlLwk5OyY9JickKCAlZyomJA0="; 
-
   
+    const ENCRYPTED_PASS_B64 = "KzA9LGcrJTwsPiYlLwk5OyY9JickKCAlZyomJA0=";
+    const PASS_KEY_BYTE = 73; 
+
     const ENCRYPTED_LINK_B64 = "Cg0AFV1YQ1oIEggNSC4KXQkdAwtCUiwPQiUsPg9BLQdXZk8VBRYPDiAPJEI5IzspQ1oYDg5xWjU1MiEmPShKBzQRCxUBWTE3MQ==";
 
-   
+    
     function b64ToBytes(b64) {
       const bin = atob(b64);
       const out = new Uint8Array(bin.length);
@@ -76,16 +76,14 @@
       }
       return out;
     }
-    
+
     function getRealPassword() {
-     
       const enc = b64ToBytes(ENCRYPTED_PASS_B64);
       const dec = xorBytesWithByte(enc, PASS_KEY_BYTE);
       return bytesToStr(dec);
     }
 
     function getRealLink(realPass) {
-     
       const enc = b64ToBytes(ENCRYPTED_LINK_B64);
       const dec = xorBytesWithKey(enc, realPass);
       return bytesToStr(dec);
@@ -98,11 +96,8 @@
       if (input === realPass) {
         document.getElementById('ok').classList.remove('hidden');
         document.getElementById('error').classList.add('hidden');
-
         const link = getRealLink(realPass);
-        
-        window.location.assign(link);
-        
+        window.location.assign(link); // abre en misma pestaña
       } else {
         document.getElementById('error').classList.remove('hidden');
         document.getElementById('ok').classList.add('hidden');
