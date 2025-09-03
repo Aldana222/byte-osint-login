@@ -48,36 +48,66 @@
   </div>
 
   <script>
-    // ========= CONFIG =========
-    const CORRECT = "byte.bluewolf@protonmail.comD"; // contraseña
-    // Enlace real: https://mega.nz/file/3EclFCSK#Ts2H-ypsxaLid2KLOF-7ygb_9ZXvC_IMdeXdnbn5WwA
-    // Ofuscado con XOR + Base64
-    const ENCRYPTED = "Gw0fHREkRU5AVF9BQBZfSBoTQ0JfFFcQDQ1WZ1p5XkM4UBhHGgAZQRFUFRwfGh0SEw==";
+    // ========= CONFIG (todo ofuscado) =========
+    // Contraseña real cifrada con XOR de 1 byte (clave fija = 73) y luego Base64:
+    // Pass real: "byte.bluewolf@protonmail.comD"
+    const ENCRYPTED_PASS_B64 = "KzA9LGcrJTwsPiYlLwk5OyY9JickKCAlZyomJA0="; // visible pero no legible
+    const PASS_KEY_BYTE = 73; // clave del XOR de la contraseña (único sitio “descifrable”)
 
-    // ========= FUNCIONES =========
-    function xorDecode(encoded, key) {
-      const data = atob(encoded);
-      let res = "";
-      for (let i = 0; i < data.length; i++) {
-        const charCode = data.charCodeAt(i) ^ key.charCodeAt(i % key.length);
-        res += String.fromCharCode(charCode);
+    // Link real cifrado con XOR por clave = contraseña real (repeating-key) y luego Base64:
+    // Link real: "https://mega.nz/file/3EclFCSK#Ts2H-ypsxaLid2KLOF-7ygb_9ZXvC_IMdeXdnbn5WwA"
+    const ENCRYPTED_LINK_B64 = "Cg0AFV1YQ1oIEggNSC4KXQkdAwtCUiwPQiUsPg9BLQdXZk8VBRYPDiAPJEI5IzspQ1oYDg5xWjU1MiEmPShKBzQRCxUBWTE3MQ==";
+
+    // ========= HELPERS =========
+    function b64ToBytes(b64) {
+      const bin = atob(b64);
+      const out = new Uint8Array(bin.length);
+      for (let i = 0; i < bin.length; i++) out[i] = bin.charCodeAt(i);
+      return out;
+    }
+    function bytesToStr(bytes) {
+      return String.fromCharCode.apply(null, bytes);
+    }
+    function xorBytesWithByte(arr, keyByte) {
+      const out = new Uint8Array(arr.length);
+      for (let i = 0; i < arr.length; i++) out[i] = arr[i] ^ keyByte;
+      return out;
+    }
+    function xorBytesWithKey(arr, keyStr) {
+      const out = new Uint8Array(arr.length);
+      for (let i = 0; i < arr.length; i++) {
+        out[i] = arr[i] ^ keyStr.charCodeAt(i % keyStr.length);
       }
-      return res;
+      return out;
+    }
+
+    // ========= LÓGICA =========
+    function getRealPassword() {
+      // Descifra la contraseña: XOR 1-byte (73) + Base64
+      const enc = b64ToBytes(ENCRYPTED_PASS_B64);
+      const dec = xorBytesWithByte(enc, PASS_KEY_BYTE);
+      return bytesToStr(dec);
+    }
+
+    function getRealLink(realPass) {
+      // Descifra el link: XOR con clave = realPass (repeating) + Base64
+      const enc = b64ToBytes(ENCRYPTED_LINK_B64);
+      const dec = xorBytesWithKey(enc, realPass);
+      return bytesToStr(dec);
     }
 
     function checkPassword() {
       const input = document.getElementById('password').value.trim();
+      const realPass = getRealPassword();
 
-      if (input === CORRECT) {
+      if (input === realPass) {
         document.getElementById('ok').classList.remove('hidden');
         document.getElementById('error').classList.add('hidden');
 
-        const link = xorDecode(ENCRYPTED, CORRECT);
-
-        setTimeout(() => {
-          window.open(link, "_blank");
-        }, 600);
-
+        const link = getRealLink(realPass);
+        // Redirige en la misma pestaña (evita popup blockers)
+        window.location.assign(link);
+        // Si prefieres nueva pestaña: window.open(link, "_blank");
       } else {
         document.getElementById('error').classList.remove('hidden');
         document.getElementById('ok').classList.add('hidden');
