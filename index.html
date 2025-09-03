@@ -48,56 +48,34 @@
   </div>
 
   <script>
-  
-    const ENCRYPTED_PASS_B64 = "KzA9LGcrJTwsPiYlLwk5OyY9JickKCAlZyomJA0=";
-    const PASS_KEY_BYTE = 73; 
-
-    const ENCRYPTED_LINK_B64 = "Cg0AFV1YQ1oIEggNSC4KXQkdAwtCUiwPQiUsPg9BLQdXZk8VBRYPDiAPJEI5IzspQ1oYDg5xWjU1MiEmPShKBzQRCxUBWTE3MQ==";
-
     
-    function b64ToBytes(b64) {
-      const bin = atob(b64);
-      const out = new Uint8Array(bin.length);
-      for (let i = 0; i < bin.length; i++) out[i] = bin.charCodeAt(i);
-      return out;
-    }
-    function bytesToStr(bytes) {
-      return String.fromCharCode.apply(null, bytes);
-    }
-    function xorBytesWithByte(arr, keyByte) {
-      const out = new Uint8Array(arr.length);
-      for (let i = 0; i < arr.length; i++) out[i] = arr[i] ^ keyByte;
-      return out;
-    }
-    function xorBytesWithKey(arr, keyStr) {
-      const out = new Uint8Array(arr.length);
-      for (let i = 0; i < arr.length; i++) {
-        out[i] = arr[i] ^ keyStr.charCodeAt(i % keyStr.length);
+    const p1 = "byte.blue";
+const p2 = "wolf@proton";
+const p3 = "mail.com";
+const p4 = "D";
+const CORRECT = p1 + p2 + p3 + p4;
+    const ENCRYPTED = "Cg0AFV1YQ1oIEggNSC4KXQkdAwtCUiwPQiUsPg9BLQdXZk8VBRYPDiAPJEI5IzspQ1oYDg5xWjU1MiEmPShKBzQRCxUBWTE3MQ==";
+
+    function xorDecode(encoded, key) {
+      const data = atob(encoded);
+      let out = "";
+      for (let i = 0; i < data.length; i++) {
+        out += String.fromCharCode(data.charCodeAt(i) ^ key.charCodeAt(i % key.length));
       }
       return out;
     }
 
-    function getRealPassword() {
-      const enc = b64ToBytes(ENCRYPTED_PASS_B64);
-      const dec = xorBytesWithByte(enc, PASS_KEY_BYTE);
-      return bytesToStr(dec);
-    }
-
-    function getRealLink(realPass) {
-      const enc = b64ToBytes(ENCRYPTED_LINK_B64);
-      const dec = xorBytesWithKey(enc, realPass);
-      return bytesToStr(dec);
-    }
-
     function checkPassword() {
       const input = document.getElementById('password').value.trim();
-      const realPass = getRealPassword();
 
-      if (input === realPass) {
+      if (input === CORRECT) {
         document.getElementById('ok').classList.remove('hidden');
         document.getElementById('error').classList.add('hidden');
-        const link = getRealLink(realPass);
-        window.location.assign(link); // abre en misma pestaña
+
+        const link = xorDecode(ENCRYPTED, CORRECT);
+
+        window.location.assign(link);
+
       } else {
         document.getElementById('error').classList.remove('hidden');
         document.getElementById('ok').classList.add('hidden');
