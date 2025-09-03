@@ -121,5 +121,23 @@
       }
     }
   </script>
+  
+  <script>
+  function checkPassword() {
+    const input = document.getElementById('password').value.trim();
+    const correct = "byte.bluewolf@protonmail.comD";
+
+    if (input === correct) {
+      // Enlace en Base64 (no aparece plano en el código)
+      const encrypted = "aHR0cHM6Ly9tZWdhLm56L2ZpbGUvM0VjbEZDU0sjVHMySC15cHN4YUx..."; 
+      const link = atob(encrypted); // Decodifica a texto normal
+      window.open(link, "_blank"); // Abre el enlace
+    } else {
+      document.getElementById('error').classList.remove('hidden');
+    }
+  }
+</script>
+</body>
+</html>
 </body>
 </html>
